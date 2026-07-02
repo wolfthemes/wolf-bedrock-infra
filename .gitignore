@@ -10,6 +10,7 @@ auth.json
 # Composer-managed plugins — untracked; actual wolfthemes plugins are
 # submodules instead (git tracks their gitlink regardless of this rule)
 web/app/plugins/*
+web/app/tools/*
 !web/app/plugins/.gitkeep
 
 # Composer-installed mu-plugins — single-file mu-plugins are tracked intentionally
