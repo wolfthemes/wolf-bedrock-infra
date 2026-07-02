@@ -5,6 +5,9 @@
 web/wp/
 vendor/
 
+# Bedrock's bundled default theme — not our actual theme (submodule)
+web/app/themes/twentytwentyfive/
+
 # npm-managed — reinstalled via `npm install` (submodules have their own)
 node_modules/
 
