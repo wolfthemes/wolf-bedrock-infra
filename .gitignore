@@ -19,6 +19,9 @@ web/app/mu-plugins/*/
 web/app/themes/twentytwentyfive/
 web/app/upgrade
 
+# Dev-only theme generator — own repo, never deployed
+web/app/themes/theme-generator/
+
 # npm-managed — reinstalled via `npm install` (submodules have their own)
 node_modules/
 
