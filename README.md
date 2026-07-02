@@ -14,9 +14,11 @@ composer create-project roots/bedrock .
 cp .env.example .env
 
 # 3. Add the theme/plugin repos as submodules, at their real Bedrock path
-#    (one-time, not a plain clone — same path in dev and prod)
-git submodule add git@github.com:wolfthemes/seijaku-fse.git web/app/themes/seijaku-fse
-git submodule add git@github.com:wolfthemes/wolf-blocks.git web/app/plugins/wolf-blocks
+#    (one-time, not a plain clone — same path in dev and prod). -f is
+#    required because web/app/{themes,plugins}/* is gitignored (Composer-
+#    managed installs live there too) — it doesn't affect the submodule.
+git submodule add -f git@github.com:wolfthemes/seijaku-fse.git web/app/themes/seijaku-fse
+git submodule add -f git@github.com:wolfthemes/wolf-blocks.git web/app/plugins/wolf-blocks
 
 # on a later checkout of this repo, pull submodule contents with:
 # git submodule update --init --recursive
@@ -38,6 +40,56 @@ docker compose logs -f php
 
 Re-run `docker compose build php` whenever `composer.json` changes — deps are
 installed at image-build time, not via a separate one-off command.
+
+## WP-CLI
+
+WP-CLI is baked into the `php` image. Run it via `docker compose exec`:
+
+```bash
+docker compose exec php wp <command>
+```
+
+To use `wp` directly from WSL without the `docker compose exec php` prefix,
+add an alias to `~/.bashrc` (run from this repo's root):
+
+```bash
+alias wp='docker compose exec php wp'
+```
+
+```bash
+wp plugin list
+wp core is-installed
+wp cache flush
+```
+
+## Adding plugins
+
+Two ways, depending on origin:
+
+- **wolfthemes' own plugins** (e.g. `wolf-blocks`) — git submodules, added
+  per step 3 above.
+- **WordPress.org plugins** — Composer, via WPackagist:
+  ```bash
+  composer require wpackagist-plugin/contact-form-7
+  docker compose up -d --build php
+  ```
+  Installs into `web/app/plugins/{slug}/`, same path Composer-managed
+  submodule plugins use, but untracked by git (reinstalled at image-build
+  time from `composer.lock`).
+
+## Multisite (subdirectory)
+
+Enabled via env, off by default:
+
+1. Install WP as a normal single site first (already the default flow above).
+2. Set `MULTISITE=true` in `.env`.
+3. `docker compose up -d --force-recreate php`
+4. Manage subsites at `http://localhost:8080/wp/wp-admin/network/`.
+
+`config/nginx.conf` already carries the subdirectory-multisite rewrite rules
+needed for subsite `/site-slug/wp-admin`, `/site-slug/wp-content/...` paths.
+Subdomain multisite is not set up (`SUBDOMAIN_INSTALL` is hardcoded `false`
+in `config/application.php`).
 
 ## Structure
 
