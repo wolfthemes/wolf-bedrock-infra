@@ -1,0 +1,89 @@
+# wolf-bedrock-docker
+
+Local Bedrock (Roots) WordPress dev environment run via Docker: nginx + PHP-FPM
++ MySQL, mirroring the repo-split convention from `wolf-store-docker` but for
+a Composer-managed Bedrock project.
+
+## First-time setup
+
+```bash
+# 1. Scaffold Bedrock into this directory (only if web/ doesn't exist yet)
+composer create-project roots/bedrock .
+
+# 2. Copy env and fill in DB creds + salts (https://roots.io/salts.html)
+cp .env.example .env
+
+# 3. Add the theme/plugin repos as submodules, at their real Bedrock path
+#    (one-time, not a plain clone — same path in dev and prod)
+git submodule add git@github.com:wolfthemes/seijaku-fse.git web/app/themes/seijaku-fse
+git submodule add git@github.com:wolfthemes/wolf-blocks.git web/app/plugins/wolf-blocks
+
+# on a later checkout of this repo, pull submodule contents with:
+# git submodule update --init --recursive
+
+# 4. Boot the stack (builds the php image, runs composer install --no-dev)
+docker compose up -d --build
+```
+
+- Site: http://localhost:8080
+- Adminer (DB GUI): http://localhost:8081
+
+## Daily workflow
+
+```bash
+docker compose up -d       # start
+docker compose down        # stop
+docker compose logs -f php
+```
+
+Re-run `docker compose build php` whenever `composer.json` changes — deps are
+installed at image-build time, not via a separate one-off command.
+
+## Structure
+
+- `nginx` serves `web/` (Bedrock's docroot) and proxies `.php` requests to
+  `php` (PHP-FPM) — see `config/nginx.conf`. Both containers bind-mount the
+  same project root, so no path translation between them.
+- `web/app/themes/{slug}` and `web/app/plugins/{slug}` are git submodules —
+  the *same path* in dev and in the deployed image. Since the whole project
+  root is already bind-mounted (`.:/var/www/html`), editing files inside a
+  submodule locally is instantly reflected — no extra mount entries needed.
+- `web/wp/` (WP core) and `vendor/` are Composer-managed, not committed.
+- One `Dockerfile` is used both by `docker-compose.yml` (dev — bind-mount
+  overrides the `COPY`'d code for live edits) and by CI (prod — no
+  bind-mount, so the built image is the immutable, self-contained deploy
+  artifact).
+
+## Deployment
+
+Two kinds of pipeline, so app code and infra/deploy stay decoupled:
+
+1. **App pipeline** — lives in each theme/plugin repo (`seijaku-fse`,
+   `wolf-blocks`), not in this repo. On push, it lints, runs `npm run build`,
+   then bumps this repo's submodule to the new commit:
+   ```bash
+   # run from the theme/plugin repo's own CI, after a successful build
+   git clone git@github.com:wolfthemes/wolf-bedrock-docker.git
+   cd wolf-bedrock-docker
+   git submodule update --remote web/app/themes/seijaku-fse
+   git commit -am "bump seijaku-fse to $(git -C web/app/themes/seijaku-fse rev-parse --short HEAD)"
+   git push
+   ```
+   That push is what triggers deployment — each theme/plugin repo stays
+   autonomous, and the orchestration logic lives only in this repo.
+
+2. **Infra pipeline** (`.github/workflows/deploy.yml`, in this repo) — on
+   push to `main`: checkout with `submodules: recursive` (latest bumped
+   commit), `docker build` (bakes `composer install --no-dev` for WP core +
+   third-party deps, versions pinned in `composer.lock`, plus all submodules
+   at their pinned commit — this is the single `Dockerfile`), push the image
+   to a registry, then SSH + `docker compose pull && up -d` on the remote.
+
+A direct push to this repo (e.g. a `composer.json` bump) skips step 1 and
+triggers step 2 directly.
+
+This is Option A of two considered (the other being a `repository_dispatch`
+event from each submodule into a single centrally-triggered CI) — chosen for
+being simpler to reason about and debug when starting out. Each submodule can
+still run its own lint/test CI independently; the Docker image built here
+stays the single deployed artifact either way.
