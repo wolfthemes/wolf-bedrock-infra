@@ -1,0 +1,3 @@
+[submodule "web/app/plugins/wolf-blocks"]
+	path = web/app/plugins/wolf-blocks
+	url = git@github.com:wolfthemes/wolf-blocks.git
