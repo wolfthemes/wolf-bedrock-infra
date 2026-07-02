@@ -3,20 +3,38 @@
 
 # Composer-managed WP core + vendor — reinstalled via `composer install`
 web/wp/
+web/.htaccess
 vendor/
+auth.json
+
+# Composer-managed plugins — untracked; actual wolfthemes plugins are
+# submodules instead (git tracks their gitlink regardless of this rule)
+web/app/plugins/*
+!web/app/plugins/.gitkeep
+
+# Composer-installed mu-plugins — single-file mu-plugins are tracked intentionally
+web/app/mu-plugins/*/
 
 # Bedrock's bundled default theme — not our actual theme (submodule)
 web/app/themes/twentytwentyfive/
+web/app/upgrade
 
 # npm-managed — reinstalled via `npm install` (submodules have their own)
 node_modules/
 
 # Runtime-generated, not source
-web/app/uploads/
-web/app/cache/
+web/app/uploads/*
+!web/app/uploads/.gitkeep
+web/app/cache/*
 log
+*.log
 *.sql
 /sql
+
+# PHPUnit/Pest
+phpunit.xml
+.phpunit.result.cache
+.phpunit.cache
 
 # WP-CLI local override
 wp-cli.local.yml

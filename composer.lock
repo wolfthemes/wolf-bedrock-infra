@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "139dcc1c0ae82beae7fe9d9f50a87537",
+    "content-hash": "2da6e4bf3a37f333254cae727257919a",
     "packages": [
         {
             "name": "composer/installers",
@@ -1066,6 +1066,24 @@
                 "source": "https://themes.svn.wordpress.org/twentytwentyfive"
             },
             "time": "2026-05-20T21:56:34+00:00"
+        },
+        {
+            "name": "wpackagist-plugin/contact-form-7",
+            "version": "6.1.6",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/contact-form-7/",
+                "reference": "tags/6.1.6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/contact-form-7.6.1.6.zip"
+            },
+            "require": {
+                "composer/installers": "^1.0 || ^2.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/contact-form-7/"
         }
     ],
     "packages-dev": [
