@@ -178,16 +178,24 @@ if (file_exists($env_config)) {
     require_once $env_config;
 }
 
-/* Multisite */
-/* Config::define('WP_ALLOW_MULTISITE', true); */
-/* Config::define('MULTISITE', true); */
-/* Config::define('SUBDOMAIN_INSTALL', false); // Set to true if using subdomains */
-/* Config::define('DOMAIN_CURRENT_SITE', env('DOMAIN_CURRENT_SITE')); */
-/* Config::define('PATH_CURRENT_SITE', env('PATH_CURRENT_SITE') ?: '/'); */
-/* Config::define('SITE_ID_CURRENT_SITE', env('SITE_ID_CURRENT_SITE') ?: 1); */
-/* Config::define('BLOG_ID_CURRENT_SITE', env('BLOG_ID_CURRENT_SITE') ?: 1); */
-/**/
-/* Config::define('WP_MEMORY_LIMIT', env('WP_MEMORY_LIMIT') ?: '2G'); */
+/**
+ * Multisite (subdirectory)
+ *
+ * WP_ALLOW_MULTISITE only exposes Tools > Network Setup in wp-admin.
+ * MULTISITE must stay false until the site is installed as a normal single
+ * site AND the network conversion has run (`wp core multisite-convert` or
+ * the Network Setup wizard) — flip it to true only after that.
+ */
+Config::define('WP_ALLOW_MULTISITE', true);
+Config::define('MULTISITE', env('MULTISITE') ?: false);
+Config::define('SUBDOMAIN_INSTALL', false);
+Config::define('DOMAIN_CURRENT_SITE', env('DOMAIN_CURRENT_SITE'));
+Config::define('PATH_CURRENT_SITE', env('PATH_CURRENT_SITE') ?: '/');
+Config::define('SITE_ID_CURRENT_SITE', env('SITE_ID_CURRENT_SITE') ?: 1);
+Config::define('BLOG_ID_CURRENT_SITE', env('BLOG_ID_CURRENT_SITE') ?: 1);
+
+/* Full WP_MEMORY_LIMIT */
+Config::define('WP_MEMORY_LIMIT', env('WP_MEMORY_LIMIT') ?: '2G');
 
 Config::apply();
 
