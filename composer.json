@@ -40,6 +40,7 @@
     "roots/wp-config": "^1.0",
     "vlucas/phpdotenv": "^5.0",
     "wp-theme/twentytwentyfive": "^1.0",
+    "wpackagist-plugin/antispam-bee": "^2.11",
     "wpackagist-plugin/contact-form-7": "^6.1"
   },
   "require-dev": {
