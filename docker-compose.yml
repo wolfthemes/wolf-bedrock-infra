@@ -1,3 +1,7 @@
+# Pin the project name so `docker compose up` reuses the same containers/volumes
+# from any path alias (WSL bind-mount hash dir, /mnt/c, symlink).
+name: wolf-bedrock-infra
+
 services:
 
   db:

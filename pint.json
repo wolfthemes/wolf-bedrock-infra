@@ -5,6 +5,7 @@
     "web/app/mu-plugins/bedrock-disallow-indexing",
     "web/app/plugins",
     "web/app/themes/twentytwentyfive",
+    "web/app/themes/wolf-blank",
     "web/app/themes/wolf-fse"
   ]
 }
