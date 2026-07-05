@@ -17,7 +17,6 @@ cp .env.example .env
 #    (one-time, not a plain clone — same path in dev and prod). -f is
 #    required because web/app/{themes,plugins}/* is gitignored (Composer-
 #    managed installs live there too) — it doesn't affect the submodule.
-git submodule add -f git@github.com:wolfthemes/seijaku-fse.git web/app/themes/seijaku-fse
 git submodule add -f git@github.com:wolfthemes/wolf-blocks.git web/app/plugins/wolf-blocks
 
 # on a later checkout of this repo, pull submodule contents with:
@@ -137,15 +136,15 @@ in `config/application.php`).
 
 Two kinds of pipeline, so app code and infra/deploy stay decoupled:
 
-1. **App pipeline** — lives in each theme/plugin repo (`seijaku-fse`,
+1. **App pipeline** — lives in each theme/plugin repo (
    `wolf-blocks`), not in this repo. On push, it lints, runs `npm run build`,
    then bumps this repo's submodule to the new commit:
    ```bash
    # run from the theme/plugin repo's own CI, after a successful build
    git clone git@github.com:wolfthemes/wolf-bedrock-docker.git
    cd wolf-bedrock-docker
-   git submodule update --remote web/app/themes/seijaku-fse
-   git commit -am "bump seijaku-fse to $(git -C web/app/themes/seijaku-fse rev-parse --short HEAD)"
+   git submodule update --remote web/app/themes/wolf-blocks
+   git commit -am "bump wolf-blocks to $(git -C web/app/themes/wolf-blocks rev-parse --short HEAD)"
    git push
    ```
    That push is what triggers deployment — each theme/plugin repo stays
