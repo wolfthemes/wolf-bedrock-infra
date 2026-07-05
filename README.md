@@ -30,6 +30,33 @@ docker compose up -d --build
 - Site: http://localhost:8080
 - Adminer (DB GUI): http://localhost:8081
 
+## Setting up on another machine (from a git clone)
+
+Once the repo exists on GitHub, bringing it up on a fresh machine doesn't need
+the scaffolding/submodule-add steps above — just pull the pinned state:
+
+```bash
+# 1. Clone (or pull) this repo
+git clone git@github.com:wolfthemes/wolf-bedrock-docker.git
+cd wolf-bedrock-docker
+
+# 2. Pull the theme/plugin submodules at their pinned commits
+git submodule update --init --recursive
+
+# 3. Copy env and fill in DB creds + salts (https://roots.io/salts.html)
+cp .env.example .env
+
+# 4. Install Composer deps (WP core + third-party plugins into web/wp, vendor/)
+composer install
+
+# 5. Boot the stack
+docker compose up -d --build
+```
+
+`docker compose up -d --build` runs `composer install` inside the image at
+build time, so step 4 is only needed if you want the deps available on the
+host (e.g. running Composer/WP-CLI outside Docker).
+
 ## Daily workflow
 
 ```bash
