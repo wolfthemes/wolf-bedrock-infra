@@ -72,14 +72,14 @@ installed at image-build time, not via a separate one-off command.
 WP-CLI is baked into the `php` image. Run it via `docker compose exec`:
 
 ```bash
-docker compose exec php wp <command>
+docker compose exec -u www-data php wp <command>
 ```
 
 To use `wp` directly from WSL without the `docker compose exec php` prefix,
 add an alias to `~/.bashrc` (run from this repo's root):
 
 ```bash
-alias wp='docker compose exec php wp'
+alias wp='docker compose exec -u www-data php wp'
 ```
 
 ```bash
