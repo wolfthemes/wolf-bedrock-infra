@@ -22,9 +22,6 @@ web/app/upgrade
 
 # Dev-only theme generator — own repo, never deployed
 web/app/themes/*
-web/app/themes/wolf-fse/
-web/app/themes/wolf-blank/
-web/app/themes/seijaku-fse/
 
 # npm-managed — reinstalled via `npm install` (submodules have their own)
 node_modules/

@@ -1,5 +1,2 @@
 # Dev-only theme generator — own repo, never baked into the image
-web/app/themes/wolf-fse/
-web/app/themes/wolf-blank/
-web/app/themes/seijaku-fse/
-web/app/plugins/wolf-store/
+web/app/themes/*
